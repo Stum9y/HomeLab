@@ -1,0 +1,199 @@
+GPU PASSTHROUGH NVIDIA GTX 1650 PROXMOX
+
+———Update && Upgrade Proxmox ———
+
+nano /etc/apt/sources.list.d/pve-enterprise.list
+
+deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription
+
+apt update
+apt dist-upgrade
+
+apt install pve-headers build-essential
+
+———Disable Nvidia Free Driver ———
+
+lspci | grep -i nvidia
+
+nano /etc/modprobe.d/blacklist.conf
+
+blacklist nouveau
+
+update-initramfs -u
+
+Reboot
+
+———Install Vulkan———
+
+apt install libvulkan-dev -y
+
+Download your gpu driver https://www.nvidia.com/Download/index.aspx
+
+wget  GPUDriverDownloadLink (From Nvidia Official)
+
+chmod +x DownloadedFile
+
+run ./DownloadedFile
+
+nano /etc/modules-load.d/nvidia.conf 
+
+nvidia-drm
+nvidia
+nvidia_uvm
+
+nano /etc/udev/rules.d/70-nvidia.rules
+
+KERNEL=="nvidia", RUN+="/bin/bash -c '/usr/bin/nvidia-smi -L && /bin/chmod 666 /dev/nvidia*'"
+KERNEL=="nvidia_modeset", RUN+="/bin/bash -c '/usr/bin/nvidia-modprobe -c0 -m && /bin/chmod 666 /dev/nvidia-modeset*'"
+KERNEL=="nvidia_uvm", RUN+="/bin/bash -c '/usr/bin/nvidia-modprobe -c0 -u && /bin/chmod 666 /dev/nvidia-uvm*'"
+
+reboot 
+
+ls -al /dev/nvidia* 
+
+Write Down Your GPU
+My Numbers Were 195,506
+
+nvidia-smi
+
+——— Create UBUNTU LXC ———
+
+Instructions used & Modified (for my use) from user Physical_Proof4656 https://www.reddit.com/r/Proxmox/comments/1c9ilp7/proxmox_gpu_passthrough_for_jellyfin_lxc_with/
+WITH THANKS TO THIS AND OTHER USERS WHO CONTRIBUTED
+
+Create a new Ubuntu LXC container for Jellyfin to run in, note the container ID (CT ID), as we will need it later. I personally use the following specs for my container: (because it is a container, you can easily change CPU cores and memory in the future, should you need more)
+
+Storage: Wherever you store your LXC Disks ssd 
+Disk size: 12 GB
+CPU cores: 4
+Memory: 2048 MB (2 GB)
+
+Start the container and log into the console, now run apt update && apt full-upgrade -y to update the system
+
+I also advise you to assign a static IP address to the continer in your internet router. If you do not do that, all connected devices may loose contact to the Jellyfin host, if the IP address changes at some point.
+
+Reboot the container, to make sure all updates are applied and if you configured one, the new static IP address is applied. (You can check the IP address with the command ip a )
+
+——— Install Preferred Media Server ———
+
+-- Install jellyfin from script --
+
+Install Jellyfin by following the steps one of the possible ways listed under "Debuntu" in the Jellyfin installation guide (https://jellyfin.org/docs/general/installation/linux/). I followed the simple way using curl. To do the same, follow these steps inside the containers console:
+
+Install curl with apt install curl -y
+
+run the Jellyfin inmstaller with curl https://repo.jellyfin.org/install-debuntu.sh | bash
+
+Note, that I removed the sudo command from the line in the installation guide, as it is not needed for the debian 12 container and will cause an error if present.
+
+Note, that the Jellyfin GUI will be present on port 8096. I suggest to add thisd informatiuon to the notes inside the containers summary
+
+Move to After Install of Preferred Media Server
+
+-- Install Plex from script --
+
+https://support.plex.tv/articles/200288586-installation/
+
+-- Install Emby from script --
+
+https://emby.media/linux-server.html
+
+——— After Install Of Preferred Media Server ———
+
+reboot
+
+Run apt update && apt upgrade -y again, just to make sure everything is up to date
+
+Add Unprivilaged mounts from nas eg: mp0: /on/host,mp=/on/lxc Thanks To James Turland aka JimsGarage - https://www.youtube.com/watch?v=DMPetY4mX-c&t=639s
+
+———LXC CONFIG———
+
+nano /etc/pve/lxc/###.conf
+
+lxc.cgroup2.devices.allow: c [The number you wrote down] :* rwm     
+lxc.cgroup2.devices.allow: c [The number you wrote down] :* rwm
+
+## My GPU number 195 and 506
+
+lxc.mount.entry: /dev/nvidia0 dev/nvidia0 none bind,optional,create=file
+lxc.mount.entry: /dev/nvidiactl dev/nvidiactl none bind,optional,create=file
+lxc.mount.entry: /dev/nvidia-uvm dev/nvidia-uvm none bind,optional,create=file
+lxc.mount.entry: /dev/nvidia-modeset dev/nvidia-modeset none bind,optional,create=file
+lxc.mount.entry: /dev/nvidia-uvm-tools dev/nvidia-uvm-tools none bind,optional,create=fileLXC -- Configs
+
+———Start LXC Ubuntu———
+
+apt update && apt upgrade -y
+
+apt install libvulkan-dev  -y
+
+Download your gpu driver from Nvidia direct
+
+wget  GPUDriverDownloadLink (From Nvidia Official)
+
+chmod +x DownloadedFile
+
+./DownloadedFile --no-kernel-module
+
+Reboot	
+
+ls -al /dev/nvidia* 
+nvidia-smi
+
+——— Addittional Step for Install Nvidia Container ———
+
+- ADD NVIDIA Container Toolkit - 
+
+apt install curl  gpg -y
+
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+apt update
+
+apt install nvidia-container-runtime -y
+
+apt install  nvidia-docker2 docker-compose nvtop -y
+
+sudo sed -i 's/^#no-cgroups = false/no-cgroups = true/;' /etc/nvidia-container-runtime/config.toml
+
+docker run --rm --gpus all nvidia/cuda:10.0-base nvidia-smi
+
+——— Create Jellyfin Docker ———
+
+mkdir Jellyfin
+
+nano docker-compose.yml
+
+version: "3.7"
+services:
+  jellyfin:
+    container_name: jellyfin
+    image: jellyfin/jellyfin
+    network_mode: "host"
+    volumes:
+      - .config:/config
+      - .cache:/cache
+      - /media:/media
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+    environment:
+     - NVIDIA_VISIBLE_DEVICES=all
+     - NVIDIA_DRIVER_CAPABILITIES=all
+    restart: always
+
+
+
+
+docker-compose up -d
+
+Configure & enjoy
+
+——— End Of Instructions ———
