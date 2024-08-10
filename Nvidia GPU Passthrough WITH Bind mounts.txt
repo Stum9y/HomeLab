@@ -140,7 +140,7 @@ Reboot
 ls -al /dev/nvidia* 
 nvidia-smi
 
-——— Addittional Step for Install Nvidia Container ———
+——— Addittional Step for Install Nvidia Container & & Docker Run Media Servers———
 
 - ADD NVIDIA Container Toolkit - 
 
@@ -162,7 +162,7 @@ sudo sed -i 's/^#no-cgroups = false/no-cgroups = true/;' /etc/nvidia-container-r
 
 docker run --rm --gpus all nvidia/cuda:10.0-base nvidia-smi
 
-——— Create Jellyfin Docker ———
+——— Create Media Server Docker ———
 
 mkdir Jellyfin
 
@@ -189,8 +189,7 @@ services:
      - NVIDIA_DRIVER_CAPABILITIES=all
     restart: always
 
-
-
+Thanks to Tizu Tech for this Docker Plex Install ---- https://tizutech.com/plex-transcoding-with-docker-nvidia-gpu/
 
 docker-compose up -d
 
