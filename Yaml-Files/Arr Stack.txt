@@ -246,16 +246,25 @@ services:
       - VPN_SERVICE_PROVIDER=Surfshark
       - VPN_TYPE=openvpn
     # OpenVPN:
-      - OPENVPN_USER=BBf2XVP9UjAVSPV5uxS84cww
-      - OPENVPN_PASSWORD=L7Jxh4kwhdjauxSHN8kxULGE
-      # Wireguard:
-      # - WIREGUARD_PRIVATE_KEY=WMNk2W0Nvrf2+YUDRW6Wz6I+jXIWqF8YR5ScMwxUA00= # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md#obtain-your-wireguard-private-key
-      # - WIREGUARD_ADDRESSES=10.5.0.2/32
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup -- Uncomment required service below
+      #- VPN_SERVICE_PROVIDER=Surfshark
+      #- VPN_TYPE=openvpn
+      # OpenVPN: DO_NOT_UNCOMMENT
+      #- OPENVPN_USER=<YOUR_PRIVATE_DETAILS_HERE>
+      #- OPENVPN_PASSWORD=<YOUR_PRIVATE_DETAILS_HERE>
+      # Wireguard: DO_NOT_UNCOMMENT
+      #- WIREGUARD_PRIVATE_KEY=<YOUR_PRIVATE_KEY> # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md#obtain-your-wireguard-private-key
+      #- WIREGUARD_ADDRESSES=XX.XX.X.XX # IP Addresses from config file
+      #- VPN_SERVICE_PROVIDER=PROVIDER_DETAILS
+      #- VPN_TYPE=wireguard
       # Timezone for accurate log times
       - TZ=Europe/London
       # Server list updater
       # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
-      - UPDATER_PERIOD=24h
+      - UPDATER_PERIOD=6h
+      # - FIREWALL_OUTBOUND_SUBNETS=172.18.0.0/24,192.168.68.0/24 # uncomment if exposing subnets to this vpn
+      # - HTTP_CONTROL_SERVER_ADDRESS=:8000 # used to expose widget to homepage see homepage.dev for details
+      # - HTTP_CONTROL_SERVER_LOG=ON
     restart: always
 
   deluge:
