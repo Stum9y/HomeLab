@@ -22,22 +22,27 @@ services:
       - 51413:51413/udp
       - 58846:58846 #optional
     volumes:
-      - /mnt/Dockerconfigs/glutun:/gluetun
+      - /mountpoint/to/glutun:/gluetun
     environment:
-      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
-      - VPN_SERVICE_PROVIDER=Surfshark
-      - VPN_TYPE=openvpn
-    # OpenVPN:
-      - OPENVPN_USER=BBf2XVP9UjAVSPV5uxS84cww
-      - OPENVPN_PASSWORD=L7Jxh4kwhdjauxSHN8kxULGE
-      # Wireguard:
-      # - WIREGUARD_PRIVATE_KEY=WMNk2W0Nvrf2+YUDRW6Wz6I+jXIWqF8YR5ScMwxUA00= # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md#obtain-your-wireguard-private-key
-      # - WIREGUARD_ADDRESSES=10.5.0.2/32
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup -- Uncomment required service below
+      #- VPN_SERVICE_PROVIDER=Surfshark
+      #- VPN_TYPE=openvpn
+      # OpenVPN: DO_NOT_UNCOMMENT
+      #- OPENVPN_USER=<YOUR_PRIVATE_DETAILS_HERE>
+      #- OPENVPN_PASSWORD=<YOUR_PRIVATE_DETAILS_HERE>
+      # Wireguard: DO_NOT_UNCOMMENT
+      #- WIREGUARD_PRIVATE_KEY=<YOUR_PRIVATE_KEY> # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md#obtain-your-wireguard-private-key
+      #- WIREGUARD_ADDRESSES=XX.XX.X.XX # IP Addresses from config file
+      #- VPN_SERVICE_PROVIDER=PROVIDER_DETAILS
+      #- VPN_TYPE=wireguard
       # Timezone for accurate log times
       - TZ=Europe/London
       # Server list updater
       # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
-      - UPDATER_PERIOD=24h
+      - UPDATER_PERIOD=6h
+      # - FIREWALL_OUTBOUND_SUBNETS=172.18.0.0/24,192.168.68.0/24 # uncomment if exposing subnets to this vpn
+      # - HTTP_CONTROL_SERVER_ADDRESS=:8000 # used to expose widget to homepage see homepage.dev for details
+      # - HTTP_CONTROL_SERVER_LOG=ON
     restart: always
 
   deluge:
@@ -49,8 +54,8 @@ services:
       - TZ=Etc/UTC
       - DELUGE_LOGLEVEL=error #optional
     volumes:
-      - /mnt/deluge:/config
-      - /mnt/Downloads:/downloads
+      - /mountpoint/to/deluge:/config
+      - /mountpoint/to/Downloads:/downloads
     ports:
       - 8112:8112 # deluge
     restart: always
@@ -64,8 +69,8 @@ services:
       - TZ=Europe/London
       - WEBUI_PORT=8008
     volumes:
-      - /mnt/qbittorrent:/config
-      - /mnt/Downloads:/downloads
+      - /mountpoint/to/qbittorrent:/config
+      - /mountpoint/to/Downloads:/downloads
     ports:
       - 8008:8008 # qbittorrent
     restart: always
@@ -84,9 +89,9 @@ services:
       - PEERPORT= #optional
       - HOST_WHITELIST= #optional
     volumes:
-      - /mnt/transmission:/config
-      - /mnt/Downloads/transmission:/downloads
-      - /mnt/Downloads/transmission/watch:/watch
+      - /mountpoint/to/transmission:/config
+      - /mountpoint/to/Downloads/transmission:/downloads
+      - /mountpoint/to/Downloads/transmission/watch:/watch
     ports:
       - 9091:9091 # Transmission
     restart: always
@@ -111,7 +116,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/prowlarr:/config
+      - /mountpoint/to/prowlarr:/config
     ports:
       - 9696:9696 # Prowlerr
     restart: unless-stopped
@@ -124,7 +129,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      /mnt/jellyseerr/config:/app/config
+      - /mountpoint/to/jellyseerr/config:/app/config
     depends_on: 
       - sonarr 
       - radarr 
@@ -140,9 +145,9 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/radarr:/config
-      - /mnt/Movies:/movies #optional
-      - /mnt/Downloads:/downloads #optional
+      - /mountpoint/to/radarr:/config
+      - /mountpoint/to/Movies:/movies #optional
+      - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 7878:7878
     restart: always
@@ -155,9 +160,9 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/sonarr:/config
-      - /mnt/TV:/tv #optional
-      - /mnt/Downloads:/downloads #optional
+      - /mountpoint/to/sonarr:/config
+      - /mountpoint/to/TV:/tv #optional
+      - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8989:8989
     restart: always
@@ -170,9 +175,9 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/lidarr:/config
-      - /mnt/Music:/music #optional
-      - /mnt/Downloads:/downloads #optional
+      - /mountpoint/to/lidarr:/config
+      - /mountpoint/to/Music:/music #optional
+      - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8686:8686
     restart: always
@@ -185,9 +190,9 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - /mnt/readarr:/config
-      - /mnt/Books:/books #optional
-      - /mnt/Downloads:/downloads #optional
+      - /mountpoint/to/readarr:/config
+      - /mountpoint/to/Books:/books #optional
+      - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8787:8787
     restart: always
@@ -200,9 +205,9 @@ services:
     image: ghcr.io/ajnart/homarr:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
-      - /mnt/Homarr/configs:/app/data/configs
-      - /mnt/Homarr/icons:/app/public/icons
-      - /mnt/Homarr/data:/data
+      - /mountpoint/to/Homarr/configs:/app/data/configs
+      - /mountpoint/to/Homarr/icons:/app/public/icons
+      - /mountpoint/to/Homarr/data:/data
     ports:
       - 7575:7575
     restart: always
@@ -235,7 +240,7 @@ services:
       - 8191:8191 # Flaresolverr
       - 9696:9696 # Prowlerr
     volumes:
-      - /mnt/glutun:/gluetun
+      - /mountpoint/to/glutun:/gluetun
     environment:
       # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
       - VPN_SERVICE_PROVIDER=Surfshark
@@ -263,8 +268,8 @@ services:
       - TZ=Etc/UTC
       - DELUGE_LOGLEVEL=error #optional
     volumes:
-      - /mnt/deluge:/config
-      - /mnt/Downloads:/downloads
+      - /mountpoint/to/deluge:/config
+      - /mountpoint/to/Downloads:/downloads
     depends_on:
       - gluetun
     restart: always
@@ -279,8 +284,8 @@ services:
       - TZ=Europe/London
       - WEBUI_PORT=8008
     volumes:
-      - /mnt/qbittorrent:/config
-      - /mnt/Downloads:/downloads
+      - /mountpoint/to/qbittorrent:/config
+      - /mountpoint/to/Downloads:/downloads
     depends_on:
       - gluetun
     restart: always
@@ -300,9 +305,9 @@ services:
       - PEERPORT= #optional
       - HOST_WHITELIST= #optional
     volumes:
-      - /mnt/transmission:/config
-      - /mnt/Downloads/transmission:/downloads
-      - /mnt/Downloads/transmission/watch:/watch
+      - /mountpoint/to/transmission:/config
+      - /mountpoint/to/Downloads/transmission:/downloads
+      - /mountpoint/to/Downloads/transmission/watch:/watch
     depends_on:
       - gluetun
     restart: always
@@ -329,7 +334,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/prowlarr:/config
+      - /mountpoint/to/prowlarr:/config
     depends_on:
       - gluetun
     restart: unless-stopped
@@ -342,7 +347,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/jellyseerr:/app/config
+      - /mountpoint/to/jellyseerr:/app/config
     depends_on: 
       - sonarr 
       - radarr 
@@ -358,9 +363,9 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/radarr:/config
-      - /mnt/Movies:/movies #optional
-      - /mnt/Downloads:/downloads #optional
+      - /mountpoint/to/radarr:/config
+      - /mountpoint/to/Movies:/movies #optional
+      - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 7878:7878
     restart: always
@@ -373,9 +378,9 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/sonarr:/config
-      - /mnt/TV:/tv #optional
-      - /mnt/Downloads:/downloads #optional
+      - /mountpoint/to/sonarr:/config
+      - /mountpoint/to/TV:/tv #optional
+      - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8989:8989
     restart: always
@@ -388,9 +393,9 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/lidarr:/config
-      - /mnt/media/Music:/music #optional
-      - /mnt/Downloads:/downloads #optional
+      - /mountpoint/to/lidarr:/config
+      - /mountpoint/to/media/Music:/music #optional
+      - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8686:8686
     restart: always
@@ -403,9 +408,9 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - /mnt/readarr:/config
-      - /mnt/Books:/books #optional
-      - /mnt/Downloads:/downloads #optional
+      - /mountpoint/to/readarr:/config
+      - /mountpoint/to/Books:/books #optional
+      - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8787:8787
     restart: always
@@ -418,9 +423,9 @@ services:
     image: ghcr.io/ajnart/homarr:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
-      - /mnt/Homarr/configs:/app/data/configs
-      - /mnt/Homarr/icons:/app/public/icons
-      - /mnt/Homarr/data:/data
+      - /mountpoint/to/Homarr/configs:/app/data/configs
+      - /mountpoint/to/Homarr/icons:/app/public/icons
+      - /mountpoint/to/Homarr/data:/data
     ports:
       - 7575:7575
     restart: always
