@@ -1,7 +1,10 @@
 __________________________________________________________________________________________________________________________________________________________
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|
+|------------------------------------------------------------BEFORE SETUP CONFIG-------------------------------------------------------------------------|
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|
-|---------------------------------------------------------------BEFORE SETUP ----------------------------------------------------------------------------|
+|-------------------------Please only use this for setup of everything once everything is configured use 'AFTER SETUP CONFIG' Below----------------------|
+|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------------------------------NO LIABILITY I DO NOT CONDONE PIRACY OF ANY FORM YOU USE AT YOUR OWN RISK-----------------------------------------|
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|
 |________________________________________________________________________________________________________________________________________________________|
 
@@ -24,19 +27,22 @@ services:
     volumes:
       - /mountpoint/to/glutun:/gluetun
     environment:
-      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup -- Uncomment required service below
-      #- VPN_SERVICE_PROVIDER=Surfshark
-      #- VPN_TYPE=openvpn
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup -- 
+      # IF USING OPEN-VPN PLEASE UNCOMMENT BELOW!!!
+      - VPN_SERVICE_PROVIDER=Surfshark
+      - VPN_TYPE=openvpn
       # OpenVPN: DO_NOT_UNCOMMENT
-      #- OPENVPN_USER=<YOUR_PRIVATE_DETAILS_HERE>
-      #- OPENVPN_PASSWORD=<YOUR_PRIVATE_DETAILS_HERE>
+      - OPENVPN_USER=<YOUR_USERNAME_HERE>
+      - OPENVPN_PASSWORD=<YOUR_PASSWORD_HERE>
+
+      # OR IF USING WIREGUARD COMMENT OUT ABOVE & UNCOMMENT BELOW!!!
       # Wireguard: DO_NOT_UNCOMMENT
       #- WIREGUARD_PRIVATE_KEY=<YOUR_PRIVATE_KEY> # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md#obtain-your-wireguard-private-key
-      #- WIREGUARD_ADDRESSES=XX.XX.X.XX # IP Addresses from config file
+      #- WIREGUARD_ADDRESSES=XX.XX.X.XX # IP Addresses from wireguard config file
       #- VPN_SERVICE_PROVIDER=PROVIDER_DETAILS
       #- VPN_TYPE=wireguard
       # Timezone for accurate log times
-      - TZ=Europe/London
+      - TZ=**YOUR-TIMEZONE**
       # Server list updater
       # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       - UPDATER_PERIOD=6h
@@ -82,12 +88,12 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - TRANSMISSION_WEB_HOME= #optional
-      - USER= #optional
-      - PASS= #optional
-      - WHITELIST= #optional
-      - PEERPORT= #optional
-      - HOST_WHITELIST= #optional
+      #- TRANSMISSION_WEB_HOME= #optional
+      #- USER= #optional
+      #- PASS= #optional
+      #- WHITELIST= #optional
+      #- PEERPORT= #optional
+      #- HOST_WHITELIST= #optional
     volumes:
       - /mountpoint/to/transmission:/config
       - /mountpoint/to/Downloads/transmission:/downloads
@@ -146,7 +152,7 @@ services:
       - TZ=Etc/UTC
     volumes:
       - /mountpoint/to/radarr:/config
-      - /mountpoint/to/Movies:/movies #optional
+      - /mountpoint/to/Movies:/movies
       - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 7878:7878
@@ -161,7 +167,7 @@ services:
       - TZ=Etc/UTC
     volumes:
       - /mountpoint/to/sonarr:/config
-      - /mountpoint/to/TV:/tv #optional
+      - /mountpoint/to/TV:/tv
       - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8989:8989
@@ -176,7 +182,7 @@ services:
       - TZ=Etc/UTC
     volumes:
       - /mountpoint/to/lidarr:/config
-      - /mountpoint/to/Music:/music #optional
+      - /mountpoint/to/Music:/music
       - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8686:8686
@@ -191,7 +197,7 @@ services:
       - TZ=Europe/London
     volumes:
       - /mountpoint/to/readarr:/config
-      - /mountpoint/to/Books:/books #optional
+      - /mountpoint/to/books:/books
       - /mountpoint/to/Downloads:/downloads #optional
     ports:
       - 8787:8787
@@ -214,10 +220,14 @@ services:
 
 __________________________________________________________________________________________________________________________________________________________
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-------------------------------------------------------------AFTER SETUP CONFIG-------------------------------------------------------------------------|
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|
-|---------------------------------------------------------------AFTER SETUP------------------------------------------------------------------------------|
+|-------------------Please only use this setup once everything is configured I suggest NO DOWNLOADING until you have deployed this-----------------------|
+|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------------------------------NO LIABILITY I DO NOT CONDONE PIRACY OF ANY FORM YOU USE AT YOUR OWN RISK-----------------------------------------|
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|
 |________________________________________________________________________________________________________________________________________________________|
+
 services:
   gluetun:
     image: qmcgaw/gluetun
@@ -242,23 +252,22 @@ services:
     volumes:
       - /mountpoint/to/glutun:/gluetun
     environment:
-      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup -- 
+      # IF USING OPEN-VPN PLEASE UNCOMMENT BELOW!!!
       - VPN_SERVICE_PROVIDER=Surfshark
       - VPN_TYPE=openvpn
-    # OpenVPN:
-      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup -- Uncomment required service below
-      #- VPN_SERVICE_PROVIDER=Surfshark
-      #- VPN_TYPE=openvpn
       # OpenVPN: DO_NOT_UNCOMMENT
-      #- OPENVPN_USER=<YOUR_PRIVATE_DETAILS_HERE>
-      #- OPENVPN_PASSWORD=<YOUR_PRIVATE_DETAILS_HERE>
+      - OPENVPN_USER=<YOUR_USERNAME_HERE>
+      - OPENVPN_PASSWORD=<YOUR_PASSWORD_HERE>
+
+      # OR IF USING WIREGUARD COMMENT OUT ABOVE & UNCOMMENT BELOW!!!
       # Wireguard: DO_NOT_UNCOMMENT
       #- WIREGUARD_PRIVATE_KEY=<YOUR_PRIVATE_KEY> # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md#obtain-your-wireguard-private-key
-      #- WIREGUARD_ADDRESSES=XX.XX.X.XX # IP Addresses from config file
+      #- WIREGUARD_ADDRESSES=XX.XX.X.XX # IP Addresses from wireguard config file
       #- VPN_SERVICE_PROVIDER=PROVIDER_DETAILS
       #- VPN_TYPE=wireguard
       # Timezone for accurate log times
-      - TZ=Europe/London
+      - TZ=**YOUR-TIMEZONE**
       # Server list updater
       # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       - UPDATER_PERIOD=6h
