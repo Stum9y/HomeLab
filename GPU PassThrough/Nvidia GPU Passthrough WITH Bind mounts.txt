@@ -1,6 +1,6 @@
 GPU PASSTHROUGH NVIDIA GTX 1650 PROXMOX
 
-———Update && Upgrade Proxmox ———
+——— Update && Upgrade Proxmox ———
 
 nano /etc/apt/sources.list.d/pve-enterprise.list
 
@@ -11,7 +11,7 @@ apt dist-upgrade
 
 apt install pve-headers build-essential
 
-———Disable Nvidia Free Driver ———
+——— Disable Nvidia Free Driver ———
 
 lspci | grep -i nvidia
 
@@ -23,7 +23,7 @@ update-initramfs -u
 
 Reboot
 
-———Install Vulkan———
+——— Install Vulkan ———
 
 apt install libvulkan-dev -y
 
@@ -106,7 +106,7 @@ Run apt update && apt upgrade -y again, just to make sure everything is up to da
 
 Add Unprivilaged mounts from nas eg: mp0: /on/host,mp=/on/lxc Thanks To James Turland aka JimsGarage - https://www.youtube.com/watch?v=DMPetY4mX-c&t=639s
 
-———LXC CONFIG———
+——— LXC CONFIG ———
 
 nano /etc/pve/lxc/###.conf
 
@@ -121,7 +121,7 @@ lxc.mount.entry: /dev/nvidia-uvm dev/nvidia-uvm none bind,optional,create=file
 lxc.mount.entry: /dev/nvidia-modeset dev/nvidia-modeset none bind,optional,create=file
 lxc.mount.entry: /dev/nvidia-uvm-tools dev/nvidia-uvm-tools none bind,optional,create=fileLXC -- Configs
 
-———Start LXC Ubuntu———
+——— Start LXC Ubuntu ———
 
 apt update && apt upgrade -y
 
